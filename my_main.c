@@ -72,6 +72,12 @@ void first_pass() {
   extern int num_frames;
   extern char name[128];
 
+  int i;
+  for(i = 0; i < lastop; i++){
+    switch(op[i].opcode){
+      
+    }
+  }
 }
 
 /*======== struct vary_node ** second_pass() ==========
