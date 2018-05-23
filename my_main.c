@@ -72,11 +72,32 @@ void first_pass() {
   extern int num_frames;
   extern char name[128];
 
+  boolean varyFound = false;
+  boolean framesFound = false;
+  boolean basenameFound = false;
   int i;
   for(i = 0; i < lastop; i++){
     switch(op[i].opcode){
-      
+      case FRAMES:
+	framesFound = true;
+	num_frames = op[i].opcode.frames.num_frames;
+	break;
+      case BASENAME:
+	name = op[i].opcode.basename.p->name;
+	basenameFound = true;
+	break;
+      case VARY:
+	varyFound = true;
+	break;
     }
+  }
+  if (varyFound && !framesFound){
+    printf("Add number of frames please!");
+    return;
+  }
+  else if (!basenameFound){
+    name = "Anime";
+    printf("anime is real boisss");
   }
 }
 
