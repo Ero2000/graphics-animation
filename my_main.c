@@ -121,6 +121,12 @@ void first_pass() {
   appropirate value.
   ====================*/
 struct vary_node ** second_pass() {
+  int i;
+  for (i = 0; i < lastop; i++){
+    if(op[i].opcode == VARY){
+      
+    }
+  }
   return NULL;
 }
 
