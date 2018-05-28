@@ -72,31 +72,25 @@ void first_pass() {
   extern int num_frames;
   extern char name[128];
 
-  boolean varyFound = false;
-  boolean framesFound = false;
-  boolean basenameFound = false;
+  int basenameFound = 0;
   int i;
   for(i = 0; i < lastop; i++){
     switch(op[i].opcode){
       case FRAMES:
-	framesFound = true;
-	num_frames = op[i].opcode.frames.num_frames;
+	num_frames = op[i].op.frames.num_frames;
 	break;
       case BASENAME:
-	name = op[i].opcode.basename.p->name;
-	basenameFound = true;
+	strcpy(name, op[i].op.basename.p->name);
+	basenameFound = 1;
 	break;
       case VARY:
-	varyFound = true;
+	if (num_frames == 1)
+	  exit(1);
 	break;
     }
   }
-  if (varyFound && !framesFound){
-    printf("Add number of frames please!");
-    return;
-  }
-  else if (!basenameFound){
-    name = "Anime";
+  if (basenameFound == 0){
+    strcpy(name, "Anime");
     printf("anime is real boisss");
   }
 }
@@ -121,13 +115,30 @@ void first_pass() {
   appropirate value.
   ====================*/
 struct vary_node ** second_pass() {
+  struct vary_node** knobs; 
   int i;
   for (i = 0; i < lastop; i++){
     if(op[i].opcode == VARY){
-      
+      double start_frame = op[i].op.vary.start_frame;
+      double end_frame = op[i].op.vary.end_frame;
+      double start_val = op[i].op.vary.start_val;
+      double end_val = op[i].op.vary.end_val;
+
+      //0-100, 0-1 steps
+      double perframe = (end_val - start_val)/(end_frame - start_frame);
+      int f;
+      for (f = start_frame; f <= end_frame; f++){
+	if (f >= 1 && f < end_frame){
+	  knobs[f-1]->next = knobs[f];
+	}
+	struct vary_node* tmp;
+	strcpy(tmp->name, op[i].op.vary.p->name);
+	tmp->value = start_val + (f - start_val) * perframe;
+	knobs[f] = tmp;
+      }
     }
   }
-  return NULL;
+  return knobs;
 }
 
 /*======== void print_knobs() ==========
