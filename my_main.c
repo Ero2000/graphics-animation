@@ -373,10 +373,10 @@ if(num_frames > 1) {
         zval = op[i].op.move.d[2];
       if (op[i].op.move.p != NULL) {
         struct vary_node *knob = knobs[f];
-        while (strcmp(knob->name, op[i].op.move.p->name) && knob) {
+        while (knob && strcmp(knob->name, op[i].op.move.p->name)) {
           knob = knob->next;
         }
-        knob_value = knob->value;
+        knob_value = knob ? knob->value : 0;
         xval *= knob_value;
         yval *= knob_value;
         zval *= knob_value;
@@ -399,10 +399,10 @@ if(num_frames > 1) {
           {
             printf("\tknob: %s",op[i].op.scale.p->name);
             struct vary_node *knob = knobs[f];
-            while (strcmp(knob->name, op[i].op.scale.p->name) && knob) {
+            while (knob && strcmp(knob->name, op[i].op.scale.p->name)) {
               knob = knob->next;
             }
-            knob_value = knob->value;
+            knob_value = knob ? knob->value : 0;
             xval *= knob_value;
             yval *= knob_value;
             zval *= knob_value;
@@ -421,10 +421,10 @@ if(num_frames > 1) {
           {
             printf("\tknob: %s",op[i].op.rotate.p->name);
             struct vary_node *knob = knobs[f];
-            while (strcmp(knob->name, op[i].op.rotate.p->name) && knob) {
+            while (knob && strcmp(knob->name, op[i].op.rotate.p->name)) {
               knob = knob->next;
             }
-            knob_value = knob->value;
+            knob_value = knob ? knob->value : 0;
             theta *= knob_value;
           }
         theta*= (M_PI / 180);
