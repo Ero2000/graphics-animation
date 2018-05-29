@@ -246,8 +246,15 @@ void my_main() {
   clear_screen( t );
   clear_zbuffer(zb);
 
+  first_pass();
+  struct vary_node **knobs = second_pass();
+  
+  int frame;
+  for (frame = 0; frame < num_frames; frame++){
+    struct vary_node * node = knobs[frame];
   for (i=0;i<lastop;i++) {
     //printf("%d: ",i);
+    
     switch (op[i].opcode)
       {
       case SPHERE:
@@ -355,6 +362,14 @@ void my_main() {
         if (op[i].op.move.p != NULL)
           {
             printf("\tknob: %s",op[i].op.move.p->name);
+	    struct vary_node*tmp = knobs[frame];
+	    while (strcmp(tmp->name, op[i].op.move.p->name))
+	      tmp = tmp->next;
+
+	      double tmp_value = tmp->value;
+	      xval *= tmp_value;
+	      yval *= tmp_value;
+	      zval *= tmp_value;
           }
         tmp = make_translate( xval, yval, zval );
         matrix_mult(peek(systems), tmp);
@@ -370,6 +385,14 @@ void my_main() {
         if (op[i].op.scale.p != NULL)
           {
             printf("\tknob: %s",op[i].op.scale.p->name);
+	    struct vary_node*tmp = knobs[frame];
+	    while (strcmp(tmp->name, op[i].op.move.p->name))
+	      tmp = tmp->next;
+
+	      double tmp_value = tmp->value;
+	      xval *= tmp_value;
+	      yval *= tmp_value;
+	      zval *= tmp_value;
           }
         tmp = make_scale( xval, yval, zval );
         matrix_mult(peek(systems), tmp);
@@ -384,6 +407,12 @@ void my_main() {
         if (op[i].op.rotate.p != NULL)
           {
             printf("\tknob: %s",op[i].op.rotate.p->name);
+	    struct vary_node*tmp = knobs[frame];
+	    while (strcmp(tmp->name, op[i].op.move.p->name))
+	      tmp = tmp->next;
+
+	      double tmp_value = tmp->value;
+	      theta *= tmp->value;
           }
         theta*= (M_PI / 180);
         if (op[i].op.rotate.axis == 0 )
@@ -414,6 +443,11 @@ void my_main() {
         display(t);
         break;
       } //end opcode switch
-    printf("\n");
+    printf("\n");  
   }//end operation loop
+    if (num_frames > 1)
+      make_animation(name);
+  }
+
+  free(knobs);
 }
