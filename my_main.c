@@ -116,7 +116,7 @@ void first_pass() {
   ====================*/
 struct vary_node ** second_pass() {
   struct vary_node** knobs = malloc(num_frames * sizeof(struct vary_node)); 
-  int i;
+  int i, f;
   double start_frame, end_frame, start_val, end_val;
   char knob_name[128];
   double perframe;
@@ -131,11 +131,10 @@ struct vary_node ** second_pass() {
       strcpy(knob_name, op[i].op.vary.p->name);
       perframe = (end_val - start_val)/(end_frame - start_frame);
 
-      int f;
       for (f = start_frame; f <= end_frame; f++){
 	struct vary_node* tmp = malloc(sizeof(struct vary_node));
-	strcpy(tmp->name, op[i].op.vary.p->name);
-	tmp->value = start_val + (f - start_val) * perframe;
+	strcpy(tmp->name, knob_name);
+	tmp->value = start_val + (f - start_frame) * perframe;
 	tmp->next = knobs[f];
 	knobs[f] = tmp;
       }
